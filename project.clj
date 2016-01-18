@@ -1,6 +1,6 @@
-(defproject rackd "0.1.0-SNAPSHOT"
-  :description ""
-  :url "https://github.com/federkasten/rackd"
+(defproject lackd "0.1.0-SNAPSHOT"
+  :description "Lightweight embedded data storage for Clojure"
+  :url "https://github.com/federkasten/lackd"
   :license {:name "Apache License, Version 2.0"
             :url "http://www.apache.org/licenses/LICENSE-2.0.html"}
   :min-lein-version "2.5.0"

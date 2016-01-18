@@ -1,4 +1,4 @@
-(ns rackd.tuple
+(ns lackd.tuple
   (:import [com.sleepycat.bind.tuple TupleInput TupleOutput]))
 
 (defn ^TupleOutput seq->tuple

@@ -1,14 +1,18 @@
-# rackd
+# lackd
 
-A Clojure library designed to ... well, that part is up to you.
+Lightweight embedded data storage for Clojure
+
+- [Backley DB](https://en.wikipedia.org/wiki/Berkeley_DB) backended
 
 ## Usage
 
-FIXME
+TODO
 
-## License
+# License
 
-Copyright © 2016 FIXME
+Copyright 2015, [Takashi AOKI][tak.sh] and other contributors.
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Other files are licensed under the [Apache License, Version 2.0][apache-license-2.0].
+
+[tak.sh]: http://tak.sh
+[apache-license-2.0]: http://www.apache.org/licenses/LICENSE-2.0.html

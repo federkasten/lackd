@@ -1,6 +1,6 @@
-(ns rackd.core
+(ns lackd.core
   (:require [clojure.java.io :as io]
-            [rackd.tuple :refer [seq->tuple tuple->seq]])
+            [lackd.tuple :refer [seq->tuple tuple->seq]])
   (:import [com.sleepycat.je Environment EnvironmentConfig Database DatabaseConfig DatabaseEntry]
            [com.sleepycat.bind.tuple StringBinding TupleBinding]))
 
