@@ -10,9 +10,9 @@ TODO
 
 # License
 
-Copyright 2015, [Takashi AOKI][tak.sh] and other contributors.
+Copyright [Takashi AOKI][tak.sh].
 
-Other files are licensed under the [Apache License, Version 2.0][apache-license-2.0].
+Licensed under the [Apache License, Version 2.0][apache-license-2.0].
 
 [tak.sh]: http://tak.sh
 [apache-license-2.0]: http://www.apache.org/licenses/LICENSE-2.0.html
