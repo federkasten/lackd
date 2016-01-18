@@ -13,11 +13,19 @@
                    (.setAllowCreate true))]
       (new Environment (io/file path) config))))
 
+(defn close-env!
+  [^Environment env]
+  (.close env))
+
 (defn open-db!
   [^Environment env name]
   (let [config (doto (new DatabaseConfig)
                  (.setAllowCreate true))]
     (.openDatabase env nil name config)))
+
+(defn close-db!
+  [^Database db]
+  (.close db))
 
 (defmulti put-entry! (fn [db key value] (if (sequential? value)
                                           :sequence
