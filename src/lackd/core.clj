@@ -1,8 +1,7 @@
 (ns lackd.core
   (:require [clojure.java.io :as io]
-            [lackd.tuple :refer [seq->tuple tuple->seq]])
-  (:import [com.sleepycat.je Environment EnvironmentConfig Database DatabaseConfig DatabaseEntry]
-           [com.sleepycat.bind.tuple StringBinding TupleBinding]))
+            [lackd.entry :as entry])
+  (:import [com.sleepycat.je Environment EnvironmentConfig Database DatabaseConfig DatabaseEntry]))
 
 (defn ^Environment open-env!
   [path]
@@ -27,41 +26,23 @@
   [^Database db]
   (.close db))
 
-(defmulti put-entry! (fn [db key value] (if (sequential? value)
-                                          :sequence
-                                          :string)))
-(defmethod put-entry! :string
-  [^Database db key value]
+(defn put-entry!
+  [^Database db ^String key value]
   (sync db
-        (let [key-entry (new DatabaseEntry)
-              value-entry (new DatabaseEntry)]
-          (StringBinding/stringToEntry key key-entry)
-          (StringBinding/stringToEntry value value-entry)
-          (.put db nil key-entry value-entry))))
-
-(defmethod put-entry! :sequence
-  [^Database db key sequence]
-  (sync db
-        (let [key-entry (new DatabaseEntry)
-              value-entry (new DatabaseEntry)]
-          (StringBinding/stringToEntry key key-entry)
-          (StringBinding/outputToEntry (seq->tuple sequence) value-entry)
+        (let [key-entry (entry/encode key)
+              value-entry (entry/encode value)]
           (.put db nil key-entry value-entry))))
 
 (defn get-entry!
-  [^Database db key]
+  [^Database db ^String key]
   (sync db
-        (let [key-entry (new DatabaseEntry)
+        (let [key-entry (entry/encode key)
               value-entry (new DatabaseEntry)]
-          (StringBinding/stringToEntry key key-entry)
           (.get db nil key-entry value-entry nil)
-          (StringBinding/entryToString value-entry))))
+          (entry/decode value-entry))))
 
-(defn get-sequence!
-  [^Database db key]
+(defn delete-entry!
+  [^Database db ^String key]
   (sync db
-        (let [key-entry (new DatabaseEntry)
-              value-entry (new DatabaseEntry)]
-          (StringBinding/stringToEntry key key-entry)
-          (.get db nil key-entry value-entry nil)
-          (tuple->seq (TupleBinding/entryToInput value-entry)))))
+        (let [key-entry (entry/encode key)]
+          (.delete db nil key-entry))))
