@@ -1,9 +1,9 @@
 (ns lackd.core
   (:require [clojure.java.io :as io]
-            [lackd.entry :as entry])
+            [lackd.entry :as entry]
+            [lackd.util :refer [long->bytes bytes->long]])
   (:import [java.io Serializable]
            [java.util Comparator]
-           [java.math BigInteger]
            [com.sleepycat.je Environment EnvironmentConfig Database DatabaseConfig DatabaseEntry LockMode OperationStatus]))
 
 (defn ^Environment open-env!
@@ -29,9 +29,8 @@
 (defn open-queue!
   [^Environment env name]
   (let [comparator (proxy [Comparator Serializable] []
-                       (compare [^bytes k1 ^bytes k2]
-                                (.compareTo (new BigInteger k1)
-                                            (new BigInteger k2))))
+                     (compare [^bytes k1 ^bytes k2]
+                       (.compareTo (bytes->long k1) (bytes->long k2))))
         config (doto (new DatabaseConfig)
                  (.setAllowCreate true)
                  (.setDeferredWrite true)
@@ -76,9 +75,21 @@
           (= OperationStatus/SUCCESS
              (.delete db nil key-entry)))))
 
+(defn update-entry!
+  [^Database db ^String key f]
+  (sync db
+        (let [key-entry (entry/encode key)
+              value-entry (new DatabaseEntry)]
+          (.get db nil key-entry value-entry nil)
+          (when-not (nil? (.getData value-entry))
+            (let [value (entry/decode value-entry)
+                  new-value-entry (entry/encode (f value))]
+              (= OperationStatus/SUCCESS
+                 (.put db nil key-entry new-value-entry)))))))
+
 ;;; Queue
 
-(defn- ^BigInteger next-queue-key
+(defn- ^Long next-queue-key
   [^Database queue]
   (let [last-key-entry (new DatabaseEntry)
         last-value-entry (new DatabaseEntry)]
@@ -87,14 +98,35 @@
       (if (.getData last-key-entry)
         (-> last-key-entry
             .getData
-            BigInteger.
-            (.add BigInteger/ONE))
-        (BigInteger/valueOf 0)))))
+            bytes->long
+            inc)
+        (Long/valueOf 0)))))
+
+(defn- ^Long previous-queue-key
+  [^Database queue]
+  (let [first-key-entry (new DatabaseEntry)
+        first-value-entry (new DatabaseEntry)]
+    (with-open [cursor (.openCursor queue nil nil)]
+      (.getFirst cursor first-key-entry first-value-entry LockMode/RMW)
+      (if (.getData first-key-entry)
+        (-> first-key-entry
+            .getData
+            bytes->long
+            dec)
+        (Long/valueOf 0)))))
+
+(defn insert-item!
+  [^Database queue value]
+  (sync queue
+        (let [key-entry (new DatabaseEntry (long->bytes (previous-queue-key queue)))
+              value-entry (entry/encode value)]
+          (= OperationStatus/SUCCESS
+             (.put queue nil key-entry value-entry)))))
 
 (defn push-item!
   [^Database queue value]
   (sync queue
-        (let [key-entry (new DatabaseEntry (.toByteArray (next-queue-key queue)))
+        (let [key-entry (new DatabaseEntry (long->bytes (next-queue-key queue)))
               value-entry (entry/encode value)]
           (= OperationStatus/SUCCESS
              (.put queue nil key-entry value-entry)))))
@@ -106,6 +138,6 @@
               value-entry (new DatabaseEntry)]
           (with-open [cursor (.openCursor queue nil nil)]
             (.getFirst cursor key-entry value-entry LockMode/RMW)
-            (when-not (nil? (.getData value-entry))
+            (when (.getData value-entry)
               (.delete cursor)
               (entry/decode value-entry))))))
