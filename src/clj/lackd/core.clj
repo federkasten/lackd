@@ -2,9 +2,8 @@
   (:require [clojure.java.io :as io]
             [lackd.entry :as entry]
             [lackd.util :refer [long->bytes bytes->long]])
-  (:import [java.io Serializable]
-           [java.util Comparator]
-           [com.sleepycat.je Environment EnvironmentConfig Database DatabaseConfig DatabaseEntry LockMode OperationStatus]))
+  (:import [com.sleepycat.je Environment EnvironmentConfig Database DatabaseConfig DatabaseEntry LockMode OperationStatus]
+           [lackd SimpleByteComparator]))
 
 (defn ^Environment open-env!
   [path]
@@ -28,13 +27,10 @@
 
 (defn open-queue!
   [^Environment env name]
-  (let [comparator (proxy [Comparator Serializable] []
-                     (compare [^bytes k1 ^bytes k2]
-                       (.compareTo (bytes->long k1) (bytes->long k2))))
-        config (doto (new DatabaseConfig)
+  (let [config (doto (new DatabaseConfig)
                  (.setAllowCreate true)
                  (.setDeferredWrite true)
-                 (.setBtreeComparator comparator))]
+                 (.setBtreeComparator SimpleByteComparator))]
     (.openDatabase env nil name config)))
 
 (defn close-db!

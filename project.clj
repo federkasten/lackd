@@ -4,6 +4,8 @@
   :license {:name "Apache License, Version 2.0"
             :url "http://www.apache.org/licenses/LICENSE-2.0.html"}
   :min-lein-version "2.5.0"
+  :source-paths ["src/clj"]
+  :java-source-paths ["src/java"]
   :dependencies [[org.clojure/tools.logging "0.3.1"]
                  [org.clojure/data.fressian "0.2.1"]
                  [com.sleepycat/je "5.0.73"]]
