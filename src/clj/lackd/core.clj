@@ -77,11 +77,11 @@
         (let [key-entry (entry/encode key)
               value-entry (new DatabaseEntry)]
           (.get db nil key-entry value-entry nil)
-          (when-not (nil? (.getData value-entry))
-            (let [value (entry/decode value-entry)
-                  new-value-entry (entry/encode (f value))]
-              (= OperationStatus/SUCCESS
-                 (.put db nil key-entry new-value-entry)))))))
+          (let [value (when-not (nil? (.getData value-entry))
+                        (entry/decode value-entry))
+                new-value-entry (entry/encode (f value))]
+            (= OperationStatus/SUCCESS
+               (.put db nil key-entry new-value-entry))))))
 
 ;;; Queue
 

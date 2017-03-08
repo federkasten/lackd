@@ -67,7 +67,7 @@
       (lackd/update-entry! @db "test3" #(map inc %))
       (lackd/get-entry! @db "test3") => (map inc (test-data "test3"))
       (lackd/update-entry! @db "not-exists" #(str "[" % "]"))
-      (lackd/get-entry! @db "not-exists") => nil ; TODO: Should be "[]" ?
+      (lackd/get-entry! @db "not-exists") => "[]"
       (lackd/delete-entry! @db "not-exists")
       (lackd/delete-entry! @db "test1")
       (lackd/get-entry! @db "test1") => nil
