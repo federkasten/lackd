@@ -4,6 +4,10 @@ Lightweight embedded data storage for Clojure
 
 - [Backley DB](https://en.wikipedia.org/wiki/Berkeley_DB) backended
 
+[![Build Status](https://travis-ci.org/federkasten/lackd.svg?branch=master)](https://travis-ci.org/federkasten/lackd)
+
+[![Clojars Project](https://img.shields.io/clojars/v/lackd.svg)](https://clojars.org/lackd)
+
 ## Usage
 
 TODO
