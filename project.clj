@@ -12,7 +12,11 @@
   :profiles {:dev {:global-vars {*warn-on-reflection* true
                                  *assert* true}
                    :dependencies [[org.clojure/clojure "1.8.0"]]}
+             :test {:plugins [[lein-cloverage "1.0.9"]
+                              [lein-midje "3.2.1"]]
+                    :dependencies [[midje "1.8.3"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.0"]]}
              :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
              :1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}
-             :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}})
+             :1.8 {:dependencies [[org.clojure/clojure "1.8.0"]]}}
+  :aliases {"test" ["with-profile" "+test" "midje"]})

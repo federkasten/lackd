@@ -8,6 +8,20 @@ Lightweight embedded data storage for Clojure
 
 TODO
 
+### Run tests
+
+```
+lein with-profile dev,test midje
+```
+
+### Get coverage
+
+```
+lein with-profile dev,test cloverage
+```
+
+and see `target/coverage/index.html`
+
 # License
 
 Copyright [Takashi AOKI][tak.sh].
