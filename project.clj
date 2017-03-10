@@ -1,4 +1,4 @@
-(defproject lackd "0.2.0"
+(defproject lackd "0.2.1-SNAPSHOT"
   :description "Lightweight embedded data storage for Clojure"
   :url "https://github.com/federkasten/lackd"
   :license {:name "Apache License, Version 2.0"
